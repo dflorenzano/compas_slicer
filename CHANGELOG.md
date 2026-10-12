@@ -11,9 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Changed**
 
+* `pull_pts_to_mesh_faces` finds the nearest face centroid with a KD-tree instead of a dense points x faces distance matrix: memory and time no longer grow with points x faces.
+
 **Fixed**
 
 * `InterpolationPrintOrganizer`: with compas_cgal installed, the distance from a print point to the previous path (`layer_height`, `distance_to_support`) was measured in XY only, so stacked layers were clamped to `min_layer_height` and `set_linear_velocity_by_range` received wrong heights. The distance is now 3D.
+* `pull_pts_to_mesh_faces` used the positional face index as a face key for the projection plane: meshes with non-contiguous face keys (e.g. after `quads_to_triangles`) raised `KeyError`.
 
 **Deprecated**
 

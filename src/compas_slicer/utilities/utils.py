@@ -17,6 +17,7 @@ from compas.geometry import (
 )
 from compas.plugins import PluginNotInstalledError
 from loguru import logger
+from scipy.spatial import cKDTree
 
 from compas_slicer.utilities.terminal_command import TerminalCommand
 
@@ -159,11 +160,12 @@ def pull_pts_to_mesh_faces(mesh: Mesh, points: list[Point]) -> tuple[list[int], 
 
     """
     points_arr = np.array(points, dtype=np.float64).reshape((-1, 3))
-    fi_fk = dict(enumerate(mesh.faces()))
-    f_centroids = np.array([mesh.face_centroid(fkey) for fkey in mesh.faces()], dtype=np.float64)
-    closest_fis = np.argmin(scipy.spatial.distance_matrix(points_arr, f_centroids), axis=1)
-    closest_fks = [fi_fk[fi] for fi in closest_fis]
-    projected_pts = [closest_point_on_plane(point, mesh.face_plane(fi)) for point, fi in zip(points_arr, closest_fis)]
+    fkeys = list(mesh.faces())
+    f_centroids = np.array([mesh.face_centroid(fkey) for fkey in fkeys], dtype=np.float64)
+    # nearest centroid with a KD-tree: O((P + F) log F) instead of a dense P x F distance matrix
+    closest_fis = cKDTree(f_centroids).query(points_arr)[1]
+    closest_fks = [fkeys[fi] for fi in closest_fis]
+    projected_pts = [closest_point_on_plane(point, mesh.face_plane(fk)) for point, fk in zip(points_arr, closest_fks)]
     return closest_fks, projected_pts
 
 
