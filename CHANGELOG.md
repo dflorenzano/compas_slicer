@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Fixed**
 
+* `InterpolationPrintOrganizer`: with compas_cgal installed, the distance from a print point to the previous path (`layer_height`, `distance_to_support`) was measured in XY only, so stacked layers were clamped to `min_layer_height` and `set_linear_velocity_by_range` received wrong heights. The distance is now 3D.
+
 **Deprecated**
 
 **Removed**

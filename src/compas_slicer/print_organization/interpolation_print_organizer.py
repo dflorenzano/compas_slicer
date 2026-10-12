@@ -52,7 +52,7 @@ def _batch_closest_points_on_polyline(
         closest = _cgal_closest(queries, polyline)
         # Compute distances
         queries_np = np.array(queries)
-        distances = np.linalg.norm(closest[:, :2] - queries_np[:, :2], axis=1)
+        distances = np.linalg.norm(closest - queries_np, axis=1)
         return closest, distances
     else:
         # Fall back to per-point compas queries
